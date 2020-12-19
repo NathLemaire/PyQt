@@ -1,0 +1,3 @@
+#!/bin/bash
+sudo docker build -t qtapp .
+sudo docker run --rm -it  -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY -u qtuser qtapp 
