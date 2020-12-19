@@ -15,5 +15,6 @@ ENV LIBGL_ALWAYS_INDIRECT=1
 RUN apt-get update && apt-get install -y python3-pyqt5 && apt-get install python3-PyQt5.QtSql
 
 COPY main.py /
+COPY Recettes /
 
 CMD ["python3", "main.py"]
