@@ -41,13 +41,13 @@
 ##
 #############################################################################
 
-
+from PyQt5.QtSql import QSqlDatabase
 from PyQt5.QtCore import QDateTime, Qt, QTimer
 from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QDateTimeEdit,
-        QDial, QDialog, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit,
-        QProgressBar, QPushButton, QRadioButton, QScrollBar, QSizePolicy,
-        QSlider, QSpinBox, QStyleFactory, QTableWidget, QTabWidget, QTextEdit,
-        QVBoxLayout, QWidget)
+                             QDial, QDialog, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit,
+                             QProgressBar, QPushButton, QRadioButton, QScrollBar, QSizePolicy,
+                             QSlider, QSpinBox, QStyleFactory, QTableWidget, QTabWidget, QTextEdit,
+                             QVBoxLayout, QWidget, QMessageBox)
 
 
 class WidgetGallery(QDialog):
@@ -234,10 +234,20 @@ class WidgetGallery(QDialog):
 
 
 if __name__ == '__main__':
-
     import sys
-
+    # Create the connection
+    con = QSqlDatabase.addDatabase("QSQLITE")
+    con.setDatabaseName("Recettes")
+    # Create the application
     app = QApplication(sys.argv)
+    # Try to open the connection and handle possible errors
+    if not con.open():
+        QMessageBox.critical(
+            None,
+            "App Name - Error!",
+            "Database Error: %s" % con.lastError().databaseText(),
+        )
+        sys.exit(1)
     gallery = WidgetGallery()
     gallery.show()
     sys.exit(app.exec_()) 
