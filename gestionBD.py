@@ -27,27 +27,65 @@ class BD(BDRegMat):
     # Création effective de la base de données
     def creerBD(self):
         # Destruction des tables antérieures
-        self.requete("DROP TABLE recettes")
-        self.requete("CREATE TABLE recettes (id INT PRIMARY KEY,"+
- 					      "nomRecette TEXT UNIQUE,"+
- 					      "prix_centimes INT)")
+        self.requete("DROP TABLE resider")
+        self.requete("DROP TABLE personnes")
+        self.requete("DROP TABLE lieux")
+
+        # Création des nouvelles tables
+        # Q2 ...
+        self.requete("CREATE TABLE lieux (codeINSEE INT PRIMARY KEY,"+
+ 					      "nomCommune TEXT, " +
+ 					      "nomDepartement TEXT)")
+
+        self.requete("CREATE TABLE personnes (ident TEXT PRIMARY KEY,"+
+					      "sexe TEXT NOT NULL,"+
+                                            "nom TEXT NOT NULL,"+
+                                            "prenom TEXT NOT NULL,"+
+                                            "profession TEXT NOT NULL,"+
+                                            "dateNaissance TEXT,"+
+                                            "codeINSEE INT REFERENCES lieux(codeINSEE),"+
+                                            "CHECK(sexe IN ('M','F')))")
+
+        self.requete("CREATE TABLE resider (ident TEXT REFERENCES personnes, "+
+        		"codeINSEE INT REFERENCES lieux(codeINSEE),"+
+        		"date TEXT, PRIMARY KEY (ident, codeINSEE, date))")
+
         
-        self.requete("INSERT INTO recettes VALUES('Gratin_de_chou', 600)")
-   
-    def retrieveprice(self, recettename):
-        table=[]
-        try:
-            table = self.question(("SELECT prix_centimes FROM recettes WHERE nomRecette='{0}'").format(recettename))
-            pass
-            if (len(table)>0):
-                return table[0][0]/100
-                pass
-        except Exception as e:
-            self.out.afficher("Erreur [retriverprice] : {0}\n".format(e.args[0]))
-            #sys.exit(1)
-        return res    
+        # Insertion matricule 1 année 1896 division Caen, M. Victor Oullet
+        self.requete("INSERT INTO lieux VALUES(14149,'Cesny-aux-Vignes','Calvados')")
+        self.requete("INSERT INTO lieux VALUES(14225,'Dives-sur-Mer','Calvados')")
+        self.requete("INSERT INTO lieux VALUES(14126,'Cambremer','Calvados')")
+        self.requete("INSERT INTO lieux VALUES(14070,'Beuvron-en-Auge','Calvados')")
+        self.requete("INSERT INTO lieux VALUES(14560,'Saint-Aubin-Lebizay','Calvados')")
+        self.requete("INSERT INTO personnes VALUES('C1896_1','M','Oullet',"+
+                            "'Victor Louis Eugène','domestique','1876-05-24',14149)")
+        self.requete("INSERT INTO resider VALUES('C1896_1',14225,'1914-02-21')")
+        self.requete("INSERT INTO resider VALUES('C1896_1',14126,'1919-07-12')")
+        self.requete("INSERT INTO resider VALUES('C1896_1',14070,'1922-03-05')")
+        self.requete("INSERT INTO resider VALUES('C1896_1',14560,'1923-03-03')")
+
+        # Insertion matricule 515 année 1896 division Caen, M. Ferdinand Guibert
+        self.requete("INSERT INTO lieux VALUES(14667,'Saon','Calvados')")
+        self.requete("INSERT INTO lieux VALUES(14369,'Litteau','Calvados')")
+        self.requete("INSERT INTO lieux VALUES({0},'{1}','{2}')".format(14727,'Vaubadon','Calvados'))
+        self.requete("INSERT INTO personnes VALUES('C1895_515','M','Guibert',"+
+                            "'Ferdinand Maurice','sabotier','1875-03-20',14727)")
+        self.requete("INSERT INTO resider VALUES('C1895_515',14667,'1896-01-01')")
+        self.requete("INSERT INTO resider VALUES('C1895_515',14369,'1900-10-19')")
+
+        # Insertion matricule 777 année 1903 division Caen, M. Fernand Leplumey
+        self.requete("INSERT INTO lieux VALUES(50178,'Fermanville','Manche')")
+        self.requete("INSERT INTO lieux VALUES(14574,'Saint-Desir','Calvados')")
+        self.requete("INSERT INTO lieux VALUES(14345,'Jort','Calvados')")
+        self.requete("INSERT INTO lieux VALUES(14366,'Lisieux','Calvados')")
+        self.requete("INSERT INTO personnes VALUES('C1903_777','M','Leplumey',"+
+                            "'Fernand Casimir Alexis','élève écclésiastique','1883-03-23',50178)")
+        self.requete("INSERT INTO resider VALUES('C1903_777',14574,'1907-10-22')")
+        self.requete("INSERT INTO resider VALUES('C1903_777',14345,'1911-01-28')")
+        self.requete("INSERT INTO resider VALUES('C1903_777',14345,'1923-09-06')")
+        self.requete("INSERT INTO resider VALUES('C1903_777',14366,'1932-01-12')")
+        print("insert done")
         
-    """
     # Remplissage de la table des lieux
     def initTableLieux(self,nomCSV):
         # Ouverture du fichier
@@ -204,9 +242,9 @@ class BD(BDRegMat):
     # Test de l'existence d'une résidence pour une personne
     def residenceExistence(self,identP,identL,date):
         res=0
-            table=self.question("SELECT count(*) FROM resider WHERE ident='{0}' and codeINSEE={1} and date='{2}'".format(identP, identL, date))
         try:
             # Recherche des militaires
+            table=self.question("SELECT count(*) FROM resider WHERE ident='{0}' and codeINSEE={1} and date='{2}'".format(identP, identL, date))
             if (len(table)>0):
                 # Retour du résultat de la requête
                 res=int(table[0][0])
@@ -235,7 +273,7 @@ class BD(BDRegMat):
         except Exception as e:
             self.out.afficher("Erreur [listeResidences] : {0}\n".format(e.args[0]))
             #sys.exit(1)
-"""
+
 # ===================================================================
 #                         Programme principal
 # ===================================================================

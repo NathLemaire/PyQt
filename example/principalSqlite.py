@@ -7,13 +7,10 @@ import sys
 #                         Programme principal
 # ===================================================================
 
-if __name__ == "__main__":
-    # Vérification de la syntaxe d'appel
-    syntaxe ="Syntaxe: "+sys.argv[0]
-    if(len(sys.argv) != 1):
-        print(syntaxe)
-        exit
-        
-    app=QApplication([])
-    mf=Fenetre()
-    app.exec_()
+def main():
+    app = QApplication(sys.argv)
+    ex = Example()
+    sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()

@@ -22,7 +22,6 @@ class BDRegMat:
             sys.exit(1)
                 
     def requete(self, reqsql):
-        #print reqsql
         try:
             with self.con:
                 self.cur.execute(reqsql)
